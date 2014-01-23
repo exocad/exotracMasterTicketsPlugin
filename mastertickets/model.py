@@ -11,7 +11,7 @@ import copy
 from datetime import datetime
 
 from trac.ticket.model import Ticket
-from trac.util.compat import any, set, sorted
+from trac.util.compat import set, sorted
 from trac.util.datefmt import utc, to_utimestamp
 
 
@@ -77,25 +77,9 @@ class TicketLinks(object):
                     update_field(new_value)
                     new_value = ', '.join(sorted(new_value, key=lambda x: int(x)))
 
-                    # ticket, time and field must be unique for database integrity
-                    # The TicketImportPlugin assigns the same changetime to all ticket
-                    # if not specified, which was causing an IntegrityError (#10194).
-                    changelog = Ticket(self.env, n).get_changelog(when=when)
-                    if any(field in cl for cl in changelog):
-                        cursor.execute("""
-                            UPDATE ticket_change SET author=%s,
-                              oldvalue=%s, newvalue=%s
-                            WHERE ticket=%s AND time=%s AND field=%s
-                            """, (author, old_value, new_value, n,
-                                  when_ts, field)
-                        )
-                    else:
-                        cursor.execute("""
-                            INSERT INTO ticket_change (ticket, time, author,
-                              field, oldvalue, newvalue)
-                            VALUES (%s, %s, %s, %s, %s, %s)""",
-                                (n, when_ts, author, field, old_value, new_value)
-                        )
+                    cursor.execute(
+                        'INSERT INTO ticket_change (ticket, time, author, field, oldvalue, newvalue) VALUES (%s, %s, %s, %s, %s, %s)',
+                        (n, when_ts, author, field, old_value, new_value))
 
                     # Add comment to referenced ticket if a comment hasn't already been added
                     if comment and not any('comment' in entry for entry in self.tkt.get_changelog(when)):
