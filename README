@@ -115,3 +115,12 @@ named _blocked.  The value of this field is checked to be zero.
 
 Using this method, other reports can be modified as well, eg to show the number of tickets
 blocking a ticket and/or the number of tickets that the ticked is blocking itself.
+
+
+Important notes
+---------------
+
+This is a fork of original v4.0.1 which can be found at 
+    https://trac-hacks.org/wiki/MasterTicketsPlugin
+
+Main reason for doing so is to apply minor visual customizations
