@@ -109,6 +109,10 @@ class MasterTicketsModule(Component):
                         continue
                     for field, field_data in change['fields'].iteritems():
                         if field in self.fields:
+                            # Skip if rendered already 
+                            if 'rendered' in field_data:
+                                continue
+
                             if field_data['new'].strip():
                                 new = to_int_set(field_data['new'])
                             else:
